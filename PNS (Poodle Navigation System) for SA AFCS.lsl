@@ -86,7 +86,7 @@ adjust()
         return;
     }
 
-    string region = llGetRegionName();
+    string region = llToUpper(llGetRegionName());
 
     integer index = llListFindStrided(route, [region], 0, -1, 4);
 
@@ -264,7 +264,7 @@ default
                     integer alt = str2gps(llList2String(tokens, 3));
                     integer hdg = str2gps(llList2String(tokens, 4));
 
-                    string region = llDumpList2String(llList2List(tokens, 5, -1), " ");
+                    string region = llToUpper(llDumpList2String(llList2List(tokens, 5, -1), " "));
 
                     route += [region, ias, alt, hdg];
                     adjust();
@@ -306,7 +306,7 @@ default
                     integer ias = str2gps(llList2String(tokens, 3));
                     integer alt = str2gps(llList2String(tokens, 4));
                     integer hdg = str2gps(llList2String(tokens, 5));
-                    string region = llDumpList2String(llList2List(tokens, 6, -1), " ");
+                    string region = llToUpper(llDumpList2String(llList2List(tokens, 6, -1), " "));
                     
                     if (line == 0)
                     {
@@ -396,7 +396,7 @@ default
                     integer ias = str2gps(llList2String(tokens, 0));
                     integer alt = str2gps(llList2String(tokens, 1));
                     integer hdg = str2gps(llList2String(tokens, 2));
-                    string region = llDumpList2String(llList2List(tokens, 3, -1), " ");
+                    string region = llToUpper(llDumpList2String(llList2List(tokens, 3, -1), " "));
                     route += [region, ias, alt, hdg];
                 }
             }
