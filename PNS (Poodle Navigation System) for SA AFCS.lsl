@@ -381,15 +381,18 @@ default
         
         while (data != NAK && data != EOF)
         {
-            list tokens = llParseString2List(data, [" "], []);
-
-            if (llGetListLength(tokens) > 3)
+            if (llGetSubString(data, 0, 0) != "#")
             {
-                integer ias = str2gps(llList2String(tokens, 0));
-                integer alt = str2gps(llList2String(tokens, 1));
-                integer hdg = str2gps(llList2String(tokens, 2));
-                string region = llDumpList2String(llList2List(tokens, 3, -1), " ");
-                route += [region, ias, alt, hdg];
+                list tokens = llParseString2List(data, [" "], []);
+
+                if (llGetListLength(tokens) > 3)
+                {
+                    integer ias = str2gps(llList2String(tokens, 0));
+                    integer alt = str2gps(llList2String(tokens, 1));
+                    integer hdg = str2gps(llList2String(tokens, 2));
+                    string region = llDumpList2String(llList2List(tokens, 3, -1), " ");
+                    route += [region, ias, alt, hdg];
+                }
             }
 
             data = llGetNotecardLineSync(notecard, ++notecard_line);
