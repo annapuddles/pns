@@ -119,6 +119,8 @@ adjust()
     {
         llMessageLinked(LINK_ROOT, 185, "hdg " + (string) hdg, NULL_KEY);
     }
+    
+    route = llList2List(route, index + 4, -1);
 }
 
 // Convert user-entered string in add command to internal value.
@@ -267,6 +269,7 @@ default
                     string region = llDumpList2String(llList2List(tokens, 5, -1), " ");
 
                     route += [region, ias, alt, hdg];
+                    adjust();
 
                     announce("Added " + region + "  IAS " + gps2str(ias) + "  ALT " + gps2str(alt) + "  HDG " + gps2str(hdg));
                 }
@@ -282,6 +285,7 @@ default
                 else if (command == "rev")
                 {
                     reverse_route();
+                    adjust();
                     announce("Route reversed.");
                 }
                 else if (command == "del")
@@ -295,6 +299,7 @@ default
                     {
                         route = llList2List(route, 0, line * 4) + llList2List(route, (line + 1) * 4, -1);
                     }
+                    adjust();
                     announce("Deleted line " + (string) line);
                 }
                 else if (command == "ins")
@@ -313,6 +318,8 @@ default
                     {
                         route = llList2List(route, 0, line * 4) + [region, ias, alt, hdg] + llList2List(route, (line + 1) * 4, -1);
                     }
+                    
+                    adjust();
 
                     announce("Added " + region + "  IAS " + gps2str(ias) + "  ALT " + gps2str(alt) + "  HDG " + gps2str(hdg) + " on line " + (string) line);
                 }
@@ -338,6 +345,7 @@ default
                 {
                     string name = llList2String(tokens, 2);
                     route = llJson2List(llLinksetDataRead(stored_route_prefix + name));
+                    adjust();
                     announce("Loaded stored route " + name);
                 }
                 else if (command == "erase")
