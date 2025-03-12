@@ -61,8 +61,6 @@
 // The prefix for stored route keys in the linkset data.
 string stored_route_prefix = "pns:storedRoute:";
 
-integer installed;
-
 // The current route instructions.
 list route;
 
