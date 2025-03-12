@@ -57,3 +57,22 @@ Delete a stored route with the alias <name>.
 
 ## `pns stored`
 Print a list of the stored routes.
+
+# Route notecards
+
+Routes can be stored in and loaded from a notecard. Below is an example of a route notecard:
+
+```
+#IAS ALT HDG REGION
+   x   x  90 Allalinhorn
+   x   x   0 Turvile
+   x   x  90 Nautilus - Ysthyalm
+   x   x   0 Marmedunc
+   x   x  90 Blake Sea - Swab
+   x   x   0 Blake Sea - China
+   0   x   x Santa Catalina
+```
+
+Lines starting with # are ignored as comments. Extra whitespace is also ignored.
+
+The name of the notecard must end with a `.pns` extension. Drop the notecard into the aircraft, and PNS will load the route from it, and then delete it.
