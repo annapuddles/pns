@@ -32,7 +32,9 @@ Add an instruction. When the aircraft enters the designated region, the specifie
 
 An `x` for the IAS, ALT or HDG means the aircraft will maintain its current value for this setting.
 
-Setting `0` for IAS will not just set the IAS to 0, but will also activate autohover mode.
+Setting `0` for IAS will also activate autohover mode.
+
+Setting `0` for ALT will also lower the gear.
 
 ## `pns ins <line> <IAS> <ALT> <HDG> <region>`
 Insert an instruction before the specified line.
@@ -57,6 +59,9 @@ Delete a stored route with the alias <name>.
 
 ## `pns stored`
 Print a list of the stored routes.
+
+## `pns strict <on|off>`
+Enable or disable strict mode. In strict mode, if the aircraft enters a region that is not listed in the current route, it will enter autohover mode.
 
 # Route notecards
 
