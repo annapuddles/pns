@@ -1,4 +1,4 @@
-// PNS (Poodle Navigation System) v0.3.0
+// PNS (Poodle Navigation System) v0.4.0
 //
 // PNS is an add-on for Shergood Aviation helicopters with an AFCS (autopilot).
 //
@@ -36,8 +36,9 @@
 //   An x for the IAS, ALT or HDG means the aircraft will maintain its current
 //   value for this setting.
 //
-//   Setting 0 for IAS will not just set the IAS to 0, but will also activate
-//   autohover mode.
+//   Setting 0 for IAS will also activate autohover.
+//
+//   Setting 0 for ALT will also lower the gear.
 //
 // pns ins <line> <ias> <alt> <hdg> <region>
 //   Insert an instruction before the specified line.
@@ -130,6 +131,10 @@ adjust()
     }
     if (alt >= 0)
     {
+        if (alt == 0)
+        {
+            llMessageLinked(LINK_ROOT, 268, "0", NULL_KEY);
+        }
         llMessageLinked(LINK_ROOT, 185, "alt " + (string) alt, NULL_KEY);
     }
     if (hdg >= 0)
