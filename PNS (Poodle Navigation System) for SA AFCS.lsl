@@ -1,4 +1,4 @@
-// PNS (Poodle Navigation System) v0.4.0
+// PNS (Poodle Navigation System) v0.5.0
 //
 // PNS is an add-on for Shergood Aviation helicopters with an AFCS (autopilot).
 //
@@ -142,7 +142,14 @@ adjust()
         llMessageLinked(LINK_ROOT, 185, "hdg " + (string) hdg, NULL_KEY);
     }
     
-    route = llList2List(route, index + 4, -1);
+    if (index + 4 >= llGetListLength(route))
+    {
+        route = [];
+    }
+    else
+    {
+        route = llList2List(route, index + 4, -1);
+    }
 }
 
 // Convert user-entered string in add command to internal value.
@@ -212,7 +219,7 @@ reverse_route()
 // Print the current route
 string list_route()
 {
-    string s = "[PNS] Route:";
+    string s = "Route:";
     integer n = llGetListLength(route);
     integer i;
     for (i = 0; i < n; i += 4)
