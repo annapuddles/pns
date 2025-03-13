@@ -1,4 +1,4 @@
-// PNS (Poodle Navigation System) v0.1.0
+// PNS (Poodle Navigation System) v0.2.0
 //
 // PNS is an add-on for Shergood Aviation helicopters with an AFCS (autopilot).
 //
@@ -432,12 +432,16 @@ default
         if (num == 126)
         {
             pilot = id;
-            announce("Registered " + llGetUsername(pilot) + " as pilot.");
+            if (id) {
+                announce("Registered " + llGetUsername(pilot) + " as pilot.");
+            }
         }
         else if (num == 145)
         {
             copilot = id;
-            announce("Registered " + llGetUsername(copilot) + " as copilot.");
+            if (id) {
+                announce("Registered " + llGetUsername(copilot) + " as copilot.");
+            }
         }
     }
 }
