@@ -186,7 +186,7 @@ reverse_route()
 }
 
 // Print the current route
-list_route(key id)
+string list_route()
 {
     string s = "[PNS] Route:";
     integer n = llGetListLength(route);
@@ -200,7 +200,7 @@ list_route(key id)
 
         s += "\n" + (string) (i / 4) + ": " + region + " - IAS " + gps2str(ias) + " - ALT " + gps2str(alt) + " - HDG " + gps2str(hdg);
     }
-    llRegionSayTo(id, 0, s);
+    return s;
 }
 
 // Send a message to both pilot and copilot
@@ -273,7 +273,7 @@ default
                 }
                 else if (command == "list")
                 {
-                    list_route(id);
+                    announce(list_route());
                 }
                 else if (command == "new")
                 {
@@ -330,8 +330,8 @@ default
                     for (i = 0; i < n; ++i)
                     {
                         text += "\n" + llGetSubString(llList2String(keys, i), llStringLength(stored_route_prefix), -1);
-                    }
-                    llRegionSayTo(id, 0, text);
+                    }                    
+                    announce(text);
                 }
                 else if (command == "save")
                 {
