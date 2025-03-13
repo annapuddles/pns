@@ -104,7 +104,7 @@ adjust()
     integer alt = llList2Integer(route, index + 2);
     integer hdg = llList2Integer(route, index + 3);
 
-    announce("Entered " + region + ", IAS: " + gps2str(ias) + ", ALT: " + gps2str(alt) + ", HDG: " + gps2str(hdg)); 
+    announce("Entered " + region + ", IAS: " + pns2str(ias) + ", ALT: " + pns2str(alt) + ", HDG: " + pns2str(hdg)); 
 
     if (ias == 0)
     {
@@ -127,7 +127,7 @@ adjust()
 }
 
 // Convert user-entered string in add command to internal value.
-integer str2gps(string value)
+integer str2pns(string value)
 {
     if (value == "x")
     {
@@ -140,7 +140,7 @@ integer str2gps(string value)
 }
 
 // Convert an internal value to a string displayed to the user.
-string gps2str(integer value)
+string pns2str(integer value)
 {
     if (value == -1)
     {
@@ -203,7 +203,7 @@ string list_route()
         integer alt = llList2Integer(route, i + 2);
         integer hdg = llList2Integer(route, i + 3);
 
-        s += "\n" + (string) (i / 4) + ": " + region + " - IAS " + gps2str(ias) + " - ALT " + gps2str(alt) + " - HDG " + gps2str(hdg);
+        s += "\n" + (string) (i / 4) + ": " + region + " - IAS " + pns2str(ias) + " - ALT " + pns2str(alt) + " - HDG " + pns2str(hdg);
     }
     return s;
 }
@@ -272,16 +272,16 @@ default
             }
             else if (command == "add")
             {
-                integer ias = str2gps(llList2String(tokens, 2));
-                integer alt = str2gps(llList2String(tokens, 3));
-                integer hdg = str2gps(llList2String(tokens, 4));
+                integer ias = str2pns(llList2String(tokens, 2));
+                integer alt = str2pns(llList2String(tokens, 3));
+                integer hdg = str2pns(llList2String(tokens, 4));
 
                 string region = llToUpper(llDumpList2String(llList2List(tokens, 5, -1), " "));
 
                 route += [region, ias, alt, hdg];
                 adjust();
 
-                announce("Added " + region + "  IAS " + gps2str(ias) + "  ALT " + gps2str(alt) + "  HDG " + gps2str(hdg));
+                announce("Added " + region + "  IAS " + pns2str(ias) + "  ALT " + pns2str(alt) + "  HDG " + pns2str(hdg));
             }
             else if (command == "list")
             {
@@ -315,9 +315,9 @@ default
             else if (command == "ins")
             {
                 integer line = (integer) llList2String(tokens, 2);
-                integer ias = str2gps(llList2String(tokens, 3));
-                integer alt = str2gps(llList2String(tokens, 4));
-                integer hdg = str2gps(llList2String(tokens, 5));
+                integer ias = str2pns(llList2String(tokens, 3));
+                integer alt = str2pns(llList2String(tokens, 4));
+                integer hdg = str2pns(llList2String(tokens, 5));
                 string region = llToUpper(llDumpList2String(llList2List(tokens, 6, -1), " "));
                 
                 if (line == 0)
@@ -331,7 +331,7 @@ default
                 
                 adjust();
 
-                announce("Added " + region + "  IAS " + gps2str(ias) + "  ALT " + gps2str(alt) + "  HDG " + gps2str(hdg) + " on line " + (string) line);
+                announce("Added " + region + "  IAS " + pns2str(ias) + "  ALT " + pns2str(alt) + "  HDG " + pns2str(hdg) + " on line " + (string) line);
             }
             else if (command == "stored")
             {
@@ -404,9 +404,9 @@ default
 
                 if (llGetListLength(tokens) > 3)
                 {
-                    integer ias = str2gps(llList2String(tokens, 0));
-                    integer alt = str2gps(llList2String(tokens, 1));
-                    integer hdg = str2gps(llList2String(tokens, 2));
+                    integer ias = str2pns(llList2String(tokens, 0));
+                    integer alt = str2pns(llList2String(tokens, 1));
+                    integer hdg = str2pns(llList2String(tokens, 2));
                     string region = llToUpper(llDumpList2String(llList2List(tokens, 3, -1), " "));
                     route += [region, ias, alt, hdg];
                 }
