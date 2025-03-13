@@ -1,4 +1,4 @@
-// PNS (Poodle Navigation System) v0.2.0
+// PNS (Poodle Navigation System) v0.3.0
 //
 // PNS is an add-on for Shergood Aviation helicopters with an AFCS (autopilot).
 //
@@ -62,6 +62,11 @@
 //
 // pns stored
 //   Print a list of the stored routes.
+//
+// pns strict <on/off>
+//   Enable or disable strict mode. In strict mode, if the aircraft enters
+//   a region that is not listed in the current route, it will enter autohover
+//   mode.
 
 // The prefix for stored route keys in the linkset data.
 string stored_route_prefix = "pns:storedRoute:";
@@ -71,6 +76,9 @@ list route;
 
 // Whether the system is active.
 integer active;
+
+// Whether to autohover if entering a region not in the route.
+integer strict;
 
 // The avatar sitting in the pilot seat.
 key pilot;
@@ -97,6 +105,12 @@ adjust()
 
     if (index == -1)
     {
+        if (strict)
+        {
+            llMessageLinked(LINK_ROOT, 185, "hvr", NULL_KEY);
+            announce(region + " not found in route.");
+        }
+        
         return;
     }
 
@@ -363,6 +377,20 @@ default
                 string name = llList2String(tokens, 2);
                 llLinksetDataDelete(stored_route_prefix + name);
                 announce("Deleted stored route " + name);
+            }
+            else if (command == "strict")
+            {
+                string subcommand = llList2String(tokens, 3);
+                if (subcommand == "on")
+                {
+                    strict = TRUE;
+                    announce("Strict mode enabled.");
+                }
+                else if (subcommand == "off")
+                {
+                    strict = FALSE;
+                    announce("Strict mode disabled.");
+                }
             }
         }
     }
