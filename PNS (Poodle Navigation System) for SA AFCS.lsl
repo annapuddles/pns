@@ -1,4 +1,6 @@
-// PNS (Poodle Navigation System) for Shergood Aviation helicopters with AFCS
+// PNS (Poodle Navigation System) v0.1.0
+//
+// PNS is an add-on for Shergood Aviation helicopters with an AFCS (autopilot).
 //
 // PNS allows a pilot to enter a set of instructions for the AFCS system based
 // on the regions the aircraft passes through.
@@ -18,8 +20,11 @@
 //
 // Commands:
 //
-// pns
-//   Activate/deactivate the system.
+// pns on
+//   Activate the system.
+//
+// pns off
+//   Deactivate the system.
 //
 // pns new
 //   Clear any stored instructions and create a new route.
@@ -242,116 +247,122 @@ default
         
         if (llToLower(llList2String(tokens, 0)) == "pns")
         {
-            if (num_tokens == 1)
+            string command = llToLower(llList2String(tokens, 1));
+
+            if (command == "")
             {
-                active = !active;
-                if (active)
+                if (!active)
                 {
+                    active = TRUE;
                     announce("Activated");
-                    adjust();
+                }
+
+                adjust();
+            }
+            else if (command == "on")
+            {
+                active = TRUE;
+                announce("Activated.");
+                adjust();
+            }
+            else if (command == "off")
+            {
+                active = FALSE;
+                announce("Deactivated.");
+            }
+            else if (command == "add")
+            {
+                integer ias = str2gps(llList2String(tokens, 2));
+                integer alt = str2gps(llList2String(tokens, 3));
+                integer hdg = str2gps(llList2String(tokens, 4));
+
+                string region = llToUpper(llDumpList2String(llList2List(tokens, 5, -1), " "));
+
+                route += [region, ias, alt, hdg];
+                adjust();
+
+                announce("Added " + region + "  IAS " + gps2str(ias) + "  ALT " + gps2str(alt) + "  HDG " + gps2str(hdg));
+            }
+            else if (command == "list")
+            {
+                announce(list_route());
+            }
+            else if (command == "new")
+            {
+                route = [];
+                announce("Route cleared.");
+            }
+            else if (command == "rev")
+            {
+                reverse_route();
+                adjust();
+                announce("Route reversed.");
+            }
+            else if (command == "del")
+            {
+                integer line = (integer) llList2String(tokens, 2);
+                if (line == 0)
+                {
+                    route = llList2List(route, 4, -1);
                 }
                 else
                 {
-                    announce("Deactivated");
+                    route = llList2List(route, 0, line * 4) + llList2List(route, (line + 1) * 4, -1);
                 }
+                adjust();
+                announce("Deleted line " + (string) line);
             }
-            else {
-                string command = llToLower(llList2String(tokens, 1));
+            else if (command == "ins")
+            {
+                integer line = (integer) llList2String(tokens, 2);
+                integer ias = str2gps(llList2String(tokens, 3));
+                integer alt = str2gps(llList2String(tokens, 4));
+                integer hdg = str2gps(llList2String(tokens, 5));
+                string region = llToUpper(llDumpList2String(llList2List(tokens, 6, -1), " "));
+                
+                if (line == 0)
+                {
+                    route = [region, ias, alt, hdg] + route;
+                }
+                else
+                {
+                    route = llList2List(route, 0, line * 4) + [region, ias, alt, hdg] + llList2List(route, (line + 1) * 4, -1);
+                }
+                
+                adjust();
 
-                if (command == "add")
+                announce("Added " + region + "  IAS " + gps2str(ias) + "  ALT " + gps2str(alt) + "  HDG " + gps2str(hdg) + " on line " + (string) line);
+            }
+            else if (command == "stored")
+            {
+                string text = "[PNS] Stored routes:";
+                list keys = llLinksetDataFindKeys(stored_route_prefix, 0, 0);
+                integer n = llGetListLength(keys);
+                integer i;
+                for (i = 0; i < n; ++i)
                 {
-                    integer ias = str2gps(llList2String(tokens, 2));
-                    integer alt = str2gps(llList2String(tokens, 3));
-                    integer hdg = str2gps(llList2String(tokens, 4));
-
-                    string region = llToUpper(llDumpList2String(llList2List(tokens, 5, -1), " "));
-
-                    route += [region, ias, alt, hdg];
-                    adjust();
-
-                    announce("Added " + region + "  IAS " + gps2str(ias) + "  ALT " + gps2str(alt) + "  HDG " + gps2str(hdg));
-                }
-                else if (command == "list")
-                {
-                    announce(list_route());
-                }
-                else if (command == "new")
-                {
-                    route = [];
-                    announce("Route cleared.");
-                }
-                else if (command == "rev")
-                {
-                    reverse_route();
-                    adjust();
-                    announce("Route reversed.");
-                }
-                else if (command == "del")
-                {
-                    integer line = (integer) llList2String(tokens, 2);
-                    if (line == 0)
-                    {
-                        route = llList2List(route, 4, -1);
-                    }
-                    else
-                    {
-                        route = llList2List(route, 0, line * 4) + llList2List(route, (line + 1) * 4, -1);
-                    }
-                    adjust();
-                    announce("Deleted line " + (string) line);
-                }
-                else if (command == "ins")
-                {
-                    integer line = (integer) llList2String(tokens, 2);
-                    integer ias = str2gps(llList2String(tokens, 3));
-                    integer alt = str2gps(llList2String(tokens, 4));
-                    integer hdg = str2gps(llList2String(tokens, 5));
-                    string region = llToUpper(llDumpList2String(llList2List(tokens, 6, -1), " "));
-                    
-                    if (line == 0)
-                    {
-                        route = [region, ias, alt, hdg] + route;
-                    }
-                    else
-                    {
-                        route = llList2List(route, 0, line * 4) + [region, ias, alt, hdg] + llList2List(route, (line + 1) * 4, -1);
-                    }
-                    
-                    adjust();
-
-                    announce("Added " + region + "  IAS " + gps2str(ias) + "  ALT " + gps2str(alt) + "  HDG " + gps2str(hdg) + " on line " + (string) line);
-                }
-                else if (command == "stored")
-                {
-                    string text = "[PNS] Stored routes:";
-                    list keys = llLinksetDataFindKeys(stored_route_prefix, 0, 0);
-                    integer n = llGetListLength(keys);
-                    integer i;
-                    for (i = 0; i < n; ++i)
-                    {
-                        text += "\n" + llGetSubString(llList2String(keys, i), llStringLength(stored_route_prefix), -1);
-                    }                    
-                    announce(text);
-                }
-                else if (command == "save")
-                {
-                    string name = llList2String(tokens, 2);
-                    llLinksetDataWrite(stored_route_prefix + name, llList2Json(JSON_ARRAY, route));
-                    announce("Saved current route as " + name);
-                }
-                else if (command == "load")
-                {
-                    string name = llList2String(tokens, 2);
-                    route = llJson2List(llLinksetDataRead(stored_route_prefix + name));
-                    adjust();
-                    announce("Loaded stored route " + name);
-                }
-                else if (command == "erase")
-                {
-                    string name = llList2String(tokens, 2);
-                    llLinksetDataDelete(stored_route_prefix + name);
-                    announce("Deleted stored route " + name);
-                }
+                    text += "\n" + llGetSubString(llList2String(keys, i), llStringLength(stored_route_prefix), -1);
+                }                    
+                announce(text);
+            }
+            else if (command == "save")
+            {
+                string name = llList2String(tokens, 2);
+                llLinksetDataWrite(stored_route_prefix + name, llList2Json(JSON_ARRAY, route));
+                announce("Saved current route as " + name);
+            }
+            else if (command == "load")
+            {
+                string name = llList2String(tokens, 2);
+                route = llJson2List(llLinksetDataRead(stored_route_prefix + name));
+                adjust();
+                announce("Loaded stored route " + name);
+            }
+            else if (command == "erase")
+            {
+                string name = llList2String(tokens, 2);
+                llLinksetDataDelete(stored_route_prefix + name);
+                announce("Deleted stored route " + name);
             }
         }
     }
