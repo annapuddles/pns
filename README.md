@@ -1,3 +1,7 @@
+<p align="center">
+<img src="PNS.png">
+</p>
+
 # PNS (Poodle Navigation System)
 
 PNS (Poodle Navigation System) is an add-on for Shergood Aviation helicopters with an AFCS (autopilot).
