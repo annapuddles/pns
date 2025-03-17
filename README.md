@@ -57,7 +57,7 @@ Load a stored route with the alias <name>.
 ## `pns erase <name>`
 Delete a stored route with the alias <name>.
 
-## `pns stored`
+## `pns routes`
 Print a list of the stored routes.
 
 ## `pns strict <on|off>`
