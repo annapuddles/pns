@@ -21,7 +21,7 @@ pns add 0 x  x Santa Catalina
 
 # Commands
 
-## `pns`
+## `pns <on|off>`
 Activate/deactivate the system. When active, the system will issue commands to the AFCS upon reaching the regions specified in the instructions.
 
 ## `pns new`
