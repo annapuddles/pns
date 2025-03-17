@@ -1,4 +1,4 @@
-// PNS (Poodle Navigation System) v0.7.0
+// PNS (Poodle Navigation System) v0.8.0
 //
 // PNS is an add-on for Shergood Aviation helicopters with an AFCS (autopilot).
 //
@@ -44,7 +44,10 @@
 //   Delete the specified line from the instructions.
 //
 // pns list
-//   Print the current set of stored instructions with their line numbers.
+//   List the current set of stored instructions with their line numbers.
+//
+// pns print
+//   Print the current route in the .pns notecard format.
 //
 // pns rev
 //   Reverse the current instructions to create a return route.
@@ -187,62 +190,6 @@ string pns2str(integer value)
     }
 }
 
-// Reverse the current route
-reverse_route()
-{
-    list new_route;
-
-    integer n = llGetListLength(route);
-    integer i;
-    for (i = n - 4; i >= 0; i -= 4)
-    {
-        string region = llList2String(route, i);
-
-        integer ias;
-        integer alt;
-        integer hdg;
-
-        // The last instruction of the new route takes the values from the last
-        // instruction of the old route.
-        if (i < 4)
-        {
-            ias = llList2Integer(route, n - 3);
-            alt = llList2Integer(route, n - 2);
-            hdg = llList2Integer(route, n - 1);
-        }
-        // Other instructions take the values from the preceding instruction in
-        // the old route, with the heading flipped.
-        else
-        {
-            ias = llList2Integer(route, i - 3);
-            alt = llList2Integer(route, i - 2);
-            hdg = (llList2Integer(route, i - 1) + 180) % 360;
-        }
-
-        new_route += [region, ias, alt, hdg];
-    }
-
-    route = new_route;
-}
-
-// Print the current route
-string list_route()
-{
-    string s = "Route:";
-    integer n = llGetListLength(route);
-    integer i;
-    for (i = 0; i < n; i += 4)
-    {
-        string region = llList2String(route, i);
-        integer ias = llList2Integer(route, i + 1);
-        integer alt = llList2Integer(route, i + 2);
-        integer hdg = llList2Integer(route, i + 3);
-
-        s += "\n" + (string) (i / 4) + ": " + region + " - IAS " + pns2str(ias) + " - ALT " + pns2str(alt) + " - HDG " + pns2str(hdg);
-    }
-    return s;
-}
-
 // Send a message to both pilot and copilot
 announce(string s)
 {
@@ -255,6 +202,18 @@ announce(string s)
     {
         llRegionSayTo(copilot, 0, s);
     }
+}
+
+// Left pad a number with spaces
+string pad(integer v)
+{
+    string s = pns2str(v);
+    integer n;
+    for (n = llStringLength(s); n < 3; ++n)
+    {
+        s = " " + s;
+    }
+    return s;
 }
 
 default
@@ -314,7 +273,42 @@ default
             }
             else if (command == "list")
             {
-                announce(list_route());
+                string s = "Route:";
+                integer n = llGetListLength(route);
+                
+                if (n == 0)
+                {
+                    announce("Route is empty.");
+                    return;
+                }
+                
+                integer i;
+                for (i = 0; i < n; i += 4)
+                {
+                    string region = llList2String(route, i);
+                    integer ias = llList2Integer(route, i + 1);
+                    integer alt = llList2Integer(route, i + 2);
+                    integer hdg = llList2Integer(route, i + 3);
+
+                    s += "\n" + (string) (i / 4) + ": " + region + " - IAS " + pns2str(ias) + " - ALT " + pns2str(alt) + " - HDG " + pns2str(hdg);
+                }
+                announce(s);
+            }
+            else if (command == "print")
+            {
+                string s = "Copy into a notecard:\n#IAS ALT HDG REGION";
+                integer n = llGetListLength(route);
+                integer i;
+                for (i = 0; i < n; i += 4)
+                {
+                    string region = llList2String(route, i);
+                    integer ias = llList2Integer(route, i + 1);
+                    integer alt = llList2Integer(route, i + 2);
+                    integer hdg = llList2Integer(route, i + 3);
+
+                    s += "\n" + pad(ias) + " " + pad(alt) + " " + pad(hdg) + " " + region;
+                }
+                announce(s);
             }
             else if (command == "new")
             {
@@ -323,8 +317,42 @@ default
             }
             else if (command == "rev")
             {
-                reverse_route();
+                list new_route;
+
+                integer n = llGetListLength(route);
+                integer i;
+                for (i = n - 4; i >= 0; i -= 4)
+                {
+                    string region = llList2String(route, i);
+
+                    integer ias;
+                    integer alt;
+                    integer hdg;
+
+                    // The last instruction of the new route takes the values from the last
+                    // instruction of the old route.
+                    if (i < 4)
+                    {
+                        ias = llList2Integer(route, n - 3);
+                        alt = llList2Integer(route, n - 2);
+                        hdg = llList2Integer(route, n - 1);
+                    }
+                    // Other instructions take the values from the preceding instruction in
+                    // the old route, with the heading flipped.
+                    else
+                    {
+                        ias = llList2Integer(route, i - 3);
+                        alt = llList2Integer(route, i - 2);
+                        hdg = (llList2Integer(route, i - 1) + 180) % 360;
+                    }
+
+                    new_route += [region, ias, alt, hdg];
+                }
+
+                route = new_route;
+
                 adjust();
+
                 announce("Route reversed.");
             }
             else if (command == "del")
