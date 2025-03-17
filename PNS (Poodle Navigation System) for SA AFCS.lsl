@@ -89,6 +89,12 @@ string notecard;
 key notecard_query;
 integer notecard_line;
 
+// Send a command to the AFCS.
+afcs(string command)
+{
+    llMessageLinked(LINK_ROOT, 185, command, NULL_KEY);
+}
+
 // Adjust the AFCS based on the instructions for the current region.
 adjust()
 {
@@ -105,10 +111,10 @@ adjust()
     {
         if (strict)
         {
-            llMessageLinked(LINK_ROOT, 185, "hvr", NULL_KEY);
+            afcs("hvr");
             announce(region + " not found in route.");
         }
-        
+
         return;
     }
 
@@ -118,27 +124,33 @@ adjust()
 
     announce("Entered " + region + ", IAS: " + pns2str(ias) + ", ALT: " + pns2str(alt) + ", HDG: " + pns2str(hdg)); 
 
+    // Activate autohover if IAS is set to 0.
     if (ias == 0)
     {
-        llMessageLinked(LINK_ROOT, 185, "hvr", NULL_KEY);
+        afcs("hvr");
     }
     else if (ias > 0)
     {
-        llMessageLinked(LINK_ROOT, 185, "ias " + (string) ias, NULL_KEY);
+        afcs("ias " + (string) ias);
     }
+
     if (alt >= 0)
     {
+        // Lower the gear if ALT is set to 0.
         if (alt == 0)
         {
             llMessageLinked(LINK_ROOT, 268, "0", NULL_KEY);
         }
-        llMessageLinked(LINK_ROOT, 185, "alt " + (string) alt, NULL_KEY);
+
+        afcs("alt " + (string) alt);
     }
+
     if (hdg >= 0)
     {
-        llMessageLinked(LINK_ROOT, 185, "hdg " + (string) hdg, NULL_KEY);
+        afcs("hdg " + (string) hdg);
     }
-    
+
+    // Pop the completed instruction, or clear the route if it is the last.
     if (index + 4 >= llGetListLength(route))
     {
         route = [];
@@ -189,7 +201,7 @@ reverse_route()
         integer ias;
         integer alt;
         integer hdg;
-        
+
         // The last instruction of the new route takes the values from the last
         // instruction of the old route.
         if (i < 4)
@@ -206,7 +218,7 @@ reverse_route()
             alt = llList2Integer(route, i - 2);
             hdg = (llList2Integer(route, i - 1) + 180) % 360;
         }
-        
+
         new_route += [region, ias, alt, hdg];
     }
 
@@ -252,7 +264,7 @@ default
         llOwnerSay("[PNS] Free Memory: " + (string) llGetFreeMemory());
         llListen(0, "", "", "");
     }
-    
+
     listen(integer channel, string name, key id, string message)
     {
         if (!(id == pilot || id == copilot))
@@ -267,7 +279,7 @@ default
         {
             return;
         }
-        
+
         if (llToLower(llList2String(tokens, 0)) == "pns")
         {
             string command = llToLower(llList2String(tokens, 1));
@@ -342,7 +354,7 @@ default
                 integer alt = str2pns(llList2String(tokens, 4));
                 integer hdg = str2pns(llList2String(tokens, 5));
                 string region = llToUpper(llDumpList2String(llList2List(tokens, 6, -1), " "));
-                
+
                 if (line == 0)
                 {
                     route = [region, ias, alt, hdg] + route;
@@ -351,7 +363,7 @@ default
                 {
                     route = llList2List(route, 0, line * 4) + [region, ias, alt, hdg] + llList2List(route, (line + 1) * 4, -1);
                 }
-                
+
                 adjust();
 
                 announce("Added " + region + "  IAS " + pns2str(ias) + "  ALT " + pns2str(alt) + "  HDG " + pns2str(hdg) + " on line " + (string) line);
@@ -403,7 +415,7 @@ default
             }
         }
     }
-    
+
     changed(integer change)
     {
         if (change & CHANGED_REGION)
@@ -425,14 +437,14 @@ default
             }
         }
     }
-    
+
     dataserver(key query_id, string data)
     {
         if (query_id != notecard_query)
         {
             return;
         }
-        
+
         while (data != NAK && data != EOF)
         {
             if (llGetSubString(data, 0, 0) != "#")
@@ -451,12 +463,12 @@ default
 
             data = llGetNotecardLineSync(notecard, ++notecard_line);
         }
-        
+
         if (data == NAK)
         {
             notecard_query = llGetNotecardLine(notecard, notecard_line);
         }
-        
+
         if (data == EOF)
         {
             announce("Loaded route from notecard " + notecard);
