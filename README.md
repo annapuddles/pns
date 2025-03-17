@@ -45,6 +45,9 @@ Delete the specified line from the instructions.
 ## `pns list`
 Print the current set of stored instructions with their line numbers.
 
+## `pns print`
+Print the current set of stored instructions in the .pns notecard format.
+
 ## `pns rev`
 Reverse the current instructions to create a return route.
 
@@ -81,3 +84,5 @@ Routes can be stored in and loaded from a notecard. Below is an example of a rou
 Lines starting with # are ignored as comments. Extra whitespace is also ignored.
 
 The name of the notecard must end with a `.pns` extension. Drop the notecard into the aircraft, and PNS will load the route from it, and then delete it.
+
+The current route can be saved to a notecard by executing the `pns print` command and copying the output into a notecard.
