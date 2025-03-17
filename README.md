@@ -11,12 +11,12 @@ This set of instructions plots a course to navigate the aircraft from SLNH to SL
 ```
 pns new
 pns add x x 90 Allalinhorn
-pns add x x  0 Turvile
+pns add x x 0 Turvile
 pns add x x 90 Nautilus - Ysthyalm
-pns add x x  0 Marmedunc
+pns add x x 0 Marmedunc
 pns add x x 90 Blake Sea - Swab
-pns add x x  0 Blake Sea - China
-pns add 0 x  x Santa Catalina
+pns add x x 0 Blake Sea - China
+pns add 0 x x Santa Catalina
 ```
 
 # Commands
@@ -52,13 +52,13 @@ Print the current set of stored instructions in the .pns notecard format.
 Reverse the current instructions to create a return route.
 
 ## `pns save <name>`
-Save the current route with the alias <name>.
+Save the current route with the alias `name`.
 
 ## `pns load <name>`
-Load a stored route with the alias <name>.
+Load a stored route with the alias `name`.
 
 ## `pns erase <name>`
-Delete a stored route with the alias <name>.
+Delete a stored route with the alias `name`.
 
 ## `pns routes`
 Print a list of the stored routes.
@@ -81,7 +81,7 @@ Routes can be stored in and loaded from a notecard. Below is an example of a rou
    0   x   x Santa Catalina
 ```
 
-Lines starting with # are ignored as comments. Extra whitespace is also ignored.
+Lines starting with `#` are ignored as comments. Extra whitespace is also ignored.
 
 The name of the notecard must end with a `.pns` extension. Drop the notecard into the aircraft, and PNS will load the route from it, and then delete it.
 
