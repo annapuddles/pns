@@ -1,4 +1,4 @@
-// PNS (Poodle Navigation System) v0.6.0
+// PNS (Poodle Navigation System) v0.7.0
 //
 // PNS is an add-on for Shergood Aviation helicopters with an AFCS (autopilot).
 //
@@ -20,11 +20,8 @@
 //
 // Commands:
 //
-// pns on
-//   Activate the system.
-//
-// pns off
-//   Deactivate the system.
+// pns <on|off>
+//   Activate/deactivate the system.
 //
 // pns new
 //   Clear any stored instructions and create a new route.
@@ -61,7 +58,7 @@
 // pns erase <name>
 //   Delete a stored route with the alias <name>.
 //
-// pns stored
+// pns routes
 //   Print a list of the stored routes.
 //
 // pns strict <on/off>
@@ -359,9 +356,9 @@ default
 
                 announce("Added " + region + "  IAS " + pns2str(ias) + "  ALT " + pns2str(alt) + "  HDG " + pns2str(hdg) + " on line " + (string) line);
             }
-            else if (command == "stored")
+            else if (command == "routes")
             {
-                string text = "[PNS] Stored routes:";
+                string text = "Stored routes:";
                 list keys = llLinksetDataFindKeys(stored_route_prefix, 0, 0);
                 integer n = llGetListLength(keys);
                 integer i;
