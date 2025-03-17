@@ -1,0 +1,28 @@
+# In a strict route, every region the aircraft will pass through must be
+# specified. If the aircraft enters a region not included in the route,
+# it will abort and enter autohover mode.
+#
+#IAS ALT HDG REGION
+   x   x  90 Allalinhorn
+   x   x   0 Turvile
+   x   x   x Foresta
+   x   x   x Fisher
+   x   x  90 Nautilus - Ysthyalm
+   x   x   x Nautilus - Oruc
+   x   x   x De La More
+   x   x   x Alziari
+   x   x   x Hugolin
+   x   x   x Yachdar
+   x   x   x Qomene
+   x   x   x Von Lorenon
+   x   x   0 Marmedunc
+   x   x   x Blake Sea - Kraken
+   x   x   x Blake Sea - Flotsam
+   x   x   x Blake Sea - Binnacle
+   x   x  90 Blake Sea - Swab
+   x   x   x Blake Sea - Mizzen
+   x   x   x Blake Sea - Crows Nest
+   x   x   x Blake Sea - Cattewater
+   x   x   x Blake Sea - Caribbean
+   x   x   0 Blake Sea - China
+   0   x   x Santa Catalina
