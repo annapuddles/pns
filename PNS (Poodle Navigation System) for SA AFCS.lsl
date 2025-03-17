@@ -273,12 +273,6 @@ default
         }
 
         list tokens = llParseString2List(message, [" "], []);
-        integer num_tokens = llGetListLength(tokens);
-
-        if (num_tokens == 0)
-        {
-            return;
-        }
 
         if (llToLower(llList2String(tokens, 0)) == "pns")
         {
