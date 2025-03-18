@@ -8,6 +8,8 @@ PNS (Poodle Navigation System) is an add-on for Shergood Aviation helicopters wi
 
 PNS allows a pilot to enter a set of instructions for the AFCS based on the regions the aircraft passes through.
 
+https://marketplace.secondlife.com/p/PNS-Poodle-Navigation-System-for-Shergood-Aviation-helicopters-with-AFCS/26975982
+
 # Example
 
 This set of instructions plots a course to navigate the aircraft from SLNH to SLHA:
