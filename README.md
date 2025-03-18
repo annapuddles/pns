@@ -23,6 +23,8 @@ pns add x x 0 Blake Sea - China
 pns add 0 x x Santa Catalina
 ```
 
+![Example route](Example%20route.png)
+
 # Commands
 
 ## `pns <on|off>`
