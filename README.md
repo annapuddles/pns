@@ -6,9 +6,13 @@
 
 PNS (Poodle Navigation System) is an add-on for Shergood Aviation helicopters with an AFCS (autopilot).
 
-PNS allows a pilot to enter a set of instructions for the AFCS based on the regions the aircraft passes through.
+PNS allows a pilot to enter a set of instructions for the AFCS based on the regions the aircraft passes through. This helps to further reduce pilot workload in addition to the AFCS itself.
 
-https://marketplace.secondlife.com/p/PNS-Poodle-Navigation-System-for-Shergood-Aviation-helicopters-with-AFCS/26975982
+> **WARNING**
+> 
+> PNS is **not** a fully autonomous system. It is the pilot's responsibility to consider sim crossings, ban lines, obstacles other aircraft and missing sims when entering a route.
+
+You can get PNS on the Second Life Marketplace [here](https://marketplace.secondlife.com/p/PNS-Poodle-Navigation-System-for-Shergood-Aviation-helicopters-with-AFCS/26975982).
 
 # Example
 
