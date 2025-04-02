@@ -1,4 +1,4 @@
-// PNS (Poodle Navigation System) v0.9.0
+// PNS (Poodle Navigation System) v0.11.0
 //
 // PNS is an add-on for Shergood Aviation helicopters with an AFCS (autopilot).
 //
@@ -68,17 +68,9 @@
 //   Enable or disable strict mode. In strict mode, if the aircraft enters
 //   a region that is not listed in the current route, it will enter autohover
 //   mode.
-//
-// pns warn <on|off>
-//   Enable or disable the sim border proximity warning. When enabled, if the
-//   aircraft gets too close to the borders of the sim parallel to the
-//   direction of travel, a warning will be emitted.
 
 // The prefix for stored route keys in the linkset data.
 string stored_route_prefix = "pns:storedRoute:";
-
-// The tone that plays when a sim border proximity warning is emitted.
-string warning_tone = "ada147a8-7a76-7648-e191-1281061cff70";
 
 // The current route instructions.
 list route;
@@ -125,7 +117,7 @@ adjust()
             afcs("hvr");
             announce(region + " not found in route.");
         }
-
+        
         return;
     }
 
@@ -169,7 +161,7 @@ adjust()
     else
     {
         route = llList2List(route, index + 4, -1);
-    }
+    }    
 }
 
 // Convert user-entered string in add command to internal value.
@@ -443,20 +435,6 @@ default
                     announce("Strict mode disabled.");
                 }
             }
-            else if (command == "warn")
-            {
-                string subcommand = llList2String(tokens, 2);
-                if (subcommand == "on")
-                {
-                    llSetTimerEvent(1);
-                    announce("Sim border proximity warning enabled.");
-                }
-                else if (subcommand == "off")
-                {
-                    llSetTimerEvent(0);
-                    announce("Sim border proximity warning disabled.");
-                }
-            }
         }
     }
 
@@ -536,43 +514,6 @@ default
             if (id) {
                 announce("Registered " + llGetUsername(copilot) + " as copilot.");
             }
-        }
-    }
-
-    timer()
-    {
-        vector pos = llGetPos();
-        vector rot = llRot2Euler(llGetRot()) * RAD_TO_DEG;
-
-        float z;
-        if (rot.z < 0)
-        {
-            z = rot.z + 360;
-        }
-        else
-        {
-            z = rot.z;
-        }
-        
-        z = (integer) (z + 90) % 360;
-
-        float target_axis;
-        
-        // East/west
-        if ((z > 45 && z < 135) || (z > 225 && z < 315))
-        {
-            target_axis = pos.y;
-        }
-        // North/south
-        else
-        {
-            target_axis = pos.x;
-        }
-
-        if (target_axis < 32 || target_axis > 224)
-        {
-            llPlaySound(warning_tone, 1);
-            announce("SIM BORDER PROXIMITY WARNING!");
         }
     }
 }
