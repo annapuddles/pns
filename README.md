@@ -74,9 +74,6 @@ Print a list of the stored routes.
 ## `pns strict <on|off>`
 Enable or disable strict mode. In strict mode, if the aircraft enters a region that is not listed in the current route, it will enter autohover mode.
 
-## `pns warn <on|off>`
-Enable or disable the sim border proximity warning system. If enabled, when the aircraft gets too close to the borders of the sim parallel to the direction of travel, a warning will be emitted.
-
 # Route notecards
 
 Routes can be stored in and loaded from a notecard. Below is an example of a route notecard:
