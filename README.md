@@ -99,13 +99,13 @@ Routes can be stored in and loaded from a notecard. Below is an example of a rou
 
 ```
 #IAS  ALT HDG REGION
-   x    x  090 Allalinhorn
-   x    x  360 Turvile
-   x    x  090 Nautilus - Ysthyalm
-   x    x  360 Marmedunc
-   x    x  090 Blake Sea - Swab
-   x    x  360 Blake Sea - China
-   0    x    x Santa Catalina
+   x    x 090 Allalinhorn
+   x    x 360 Turvile
+   x    x 090 Nautilus - Ysthyalm
+   x    x 360 Marmedunc
+   x    x 090 Blake Sea - Swab
+   x    x 360 Blake Sea - China
+   0    x   x Santa Catalina
 ```
 
 Lines starting with `#` are ignored as comments. Extra whitespace is also ignored.
