@@ -1,4 +1,4 @@
-// PNS (Poodle Navigation System) v1.0.0
+// PNS (Poodle Navigation System) v1.1.0
 //
 // PNS is an add-on for Shergood Aviation helicopters with an AFCS (autopilot).
 //
@@ -8,13 +8,13 @@
 // For example:
 //
 // pns new
-// pns add x x 90 Allalinhorn
-// pns add x x  0 Turvile
-// pns add x x 90 Nautilus - Ysthyalm
-// pns add x x  0 Marmedunc
-// pns add x x 90 Blake Sea - Swab
-// pns add x x  0 Blake Sea - China
-// pns add 0 x  x Santa Catalina
+// pns add x x 090 Allalinhorn
+// pns add x x 360 Turvile
+// pns add x x 090 Nautilus - Ysthyalm
+// pns add x x 360 Marmedunc
+// pns add x x 090 Blake Sea - Swab
+// pns add x x 360 Blake Sea - China
+// pns add 0 x   x Santa Catalina
 //
 // This set of instructions navigates the aircraft from SLNH to SLHA.
 //
@@ -68,6 +68,9 @@
 //   Enable or disable strict mode. In strict mode, if the aircraft enters
 //   a region that is not listed in the current route, it will enter autohover
 //   mode.
+//
+// pns beacons <on|off>
+//   Enable or disable automatic map beacons. Only works for the owner.
 
 // The prefix for stored route keys in the linkset data.
 string stored_route_prefix = "pns:storedRoute:";
@@ -80,6 +83,9 @@ integer active;
 
 // Whether to autohover if entering a region not in the route.
 integer strict;
+
+// Whether to set automatic map beacons.
+integer beacons;
 
 // The avatar sitting in the pilot seat.
 key pilot;
@@ -96,6 +102,52 @@ integer notecard_line;
 afcs(string command)
 {
     llMessageLinked(LINK_ROOT, 185, command, NULL_KEY);
+}
+
+// Add a beacon to the map for the next instruction
+set_beacon()
+{
+    // No beacon if beacons are disabled
+    if (!beacons)
+    {
+        return;
+    }
+    
+    // No beacon if there are no instructions left
+    if (llGetListLength(route) < 4)
+    {
+        return;
+    }
+
+    // Get the info for the next region
+    string region = llList2String(route, 0);
+    integer alt = llList2Integer(route, 2);
+    integer hdg = llList2Integer(route, 3);
+
+    // If no alt set for next region, use the current altitude
+    if (alt == -1)
+    {
+        vector pos = llGetPos();
+        alt = (integer) pos.z;
+    }
+    
+    // Default beacon placement at centre of region
+    vector pos = <128, 128, 0>;
+    
+    // Use the heading to place the beacon in the direction of travel if one is set
+    if (hdg != -1)
+    {
+        float x = pos.x + llSin(hdg * DEG_TO_RAD) * 96;
+        float y = pos.y + llCos(hdg * DEG_TO_RAD) * 96;
+        pos = <x, y, alt>;
+    }
+    else
+    {
+        pos = <pos.x, pos.y, alt>;
+    }
+
+    // Set the beacon
+    llMapBeacon(region, pos, [BEACON_MAP, FALSE, FALSE]);
 }
 
 // Adjust the AFCS based on the instructions for the current region.
@@ -117,6 +169,8 @@ adjust()
             afcs("hvr");
             announce(region + " not found in route.");
         }
+
+        set_beacon();
         
         return;
     }
@@ -161,15 +215,51 @@ adjust()
     else
     {
         route = llList2List(route, index + 4, -1);
+
+        set_beacon();
     }    
 }
 
 // Convert user-entered string in add command to internal value.
 integer str2pns(string value)
 {
-    if (value == "x")
+    value = llToUpper(value);
+    
+    if (llSubStringIndex(value, "X") != -1 || llSubStringIndex(value, "-") != -1)
     {
         return -1;
+    }
+    else if (value == "N")
+    {
+        return 360;
+    }
+    else if (value == "NE")
+    {
+        return 45;
+    }
+    else if (value == "E")
+    {
+        return 90;
+    }
+    else if (value == "SE")
+    {
+        return 135;
+    }
+    else if (value == "S")
+    {
+        return 180;
+    }
+    else if (value == "SW")
+    {
+        return 225;
+    }
+    else if (value == "W")
+    {
+        return 270;
+    }
+    else if (value == "NW")
+    {
+        return 315;
     }
     else
     {
@@ -205,11 +295,11 @@ announce(string s)
 }
 
 // Left pad a number with spaces
-string pad(integer v)
+string pad(integer v, integer c)
 {
     string s = pns2str(v);
     integer n;
-    for (n = llStringLength(s); n < 3; ++n)
+    for (n = llStringLength(s); n < c; ++n)
     {
         s = " " + s;
     }
@@ -296,7 +386,7 @@ default
             }
             else if (command == "print")
             {
-                string s = "Copy into a notecard:\n#IAS ALT HDG REGION";
+                string s = "Copy into a notecard:\n#IAS  ALT HDG REGION";
                 integer n = llGetListLength(route);
                 integer i;
                 for (i = 0; i < n; i += 4)
@@ -306,7 +396,7 @@ default
                     integer alt = llList2Integer(route, i + 2);
                     integer hdg = llList2Integer(route, i + 3);
 
-                    s += "\n" + pad(ias) + " " + pad(alt) + " " + pad(hdg) + " " + region;
+                    s += "\n" + pad(ias, 4) + " " + pad(alt, 4) + " " + pad(hdg, 3) + " " + region;
                 }
                 announce(s);
             }
@@ -435,6 +525,20 @@ default
                     announce("Strict mode disabled.");
                 }
             }
+            else if (command == "beacons")
+            {
+                string subcommand = llList2String(tokens, 2);
+                if (subcommand == "on")
+                {
+                    beacons = TRUE;
+                    announce("Map beacons enabled.");
+                }
+                else if (subcommand == "off")
+                {
+                    beacons = FALSE;
+                    announce("Map beacons disabled.");
+                }
+            }
         }
     }
 
@@ -514,6 +618,14 @@ default
             if (id) {
                 announce("Registered " + llGetUsername(copilot) + " as copilot.");
             }
+        }
+    }
+
+    attach(key id)
+    {
+        pilot = id;
+        if (id) {
+            announce("Registered " + llGetUsername(pilot) + " as pilot.");
         }
     }
 }
