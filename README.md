@@ -20,12 +20,12 @@ This set of instructions plots a course to navigate the aircraft from SLNH to SL
 
 ```
 pns new
-pns add x x 90 Allalinhorn
-pns add x x 0 Turvile
-pns add x x 90 Nautilus - Ysthyalm
-pns add x x 0 Marmedunc
-pns add x x 90 Blake Sea - Swab
-pns add x x 0 Blake Sea - China
+pns add x x 090 Allalinhorn
+pns add x x 360 Turvile
+pns add x x 090 Nautilus - Ysthyalm
+pns add x x 360 Marmedunc
+pns add x x 090 Blake Sea - Swab
+pns add x x 360 Blake Sea - China
 pns add 0 x x Santa Catalina
 ```
 
@@ -42,11 +42,23 @@ Clear any stored instructions and create a new route.
 ## `pns add <IAS> <ALT> <HDG> <region>`
 Add an instruction. When the aircraft enters the designated region, the specified IAS, ALT, and HDG holds will be set in the AFCS.
 
-An `x` for the IAS, ALT or HDG means the aircraft will maintain its current value for this setting.
+An `x` or `-` for the IAS, ALT or HDG means the aircraft will maintain its current value for this setting.
 
 Setting `0` for IAS will also activate autohover mode.
 
 Setting `0` for ALT will also lower the gear.
+
+HDG may also be specified using a compass direction shorthand in place of degrees:
+| Shorthand | Heading |
+|-----------|---------|
+| N         | 360     |
+| NE        | 045     |
+| E         | 090     |
+| SE        | 135     |
+| S         | 180     |
+| SW        | 225     |
+| W         | 270     |
+| NW        | 315     |
 
 ## `pns ins <line> <IAS> <ALT> <HDG> <region>`
 Insert an instruction before the specified line.
@@ -78,19 +90,22 @@ Print a list of the stored routes.
 ## `pns strict <on|off>`
 Enable or disable strict mode. In strict mode, if the aircraft enters a region that is not listed in the current route, it will enter autohover mode.
 
+## `pns beacons <on|off>`
+Enable or disable automatic map beacons. When enabled, PNS will automatically set your world map beacon to the next region. If a heading is set for that region, the beacon will be placed near the edge of the region in the direction of travel. This feature only works for the owner of the aircraft.
+
 # Route notecards
 
 Routes can be stored in and loaded from a notecard. Below is an example of a route notecard:
 
 ```
-#IAS ALT HDG REGION
-   x   x  90 Allalinhorn
-   x   x   0 Turvile
-   x   x  90 Nautilus - Ysthyalm
-   x   x   0 Marmedunc
-   x   x  90 Blake Sea - Swab
-   x   x   0 Blake Sea - China
-   0   x   x Santa Catalina
+#IAS  ALT HDG REGION
+   x    x  090 Allalinhorn
+   x    x  360 Turvile
+   x    x  090 Nautilus - Ysthyalm
+   x    x  360 Marmedunc
+   x    x  090 Blake Sea - Swab
+   x    x  360 Blake Sea - China
+   0    x    x Santa Catalina
 ```
 
 Lines starting with `#` are ignored as comments. Extra whitespace is also ignored.
